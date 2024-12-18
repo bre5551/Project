@@ -1,4 +1,6 @@
 # Project
 Semester Project for ECON8320
 
-$ streamlit run streamlit_app.py
+## Streamlit App
+Check out the live app here: [Streamlit App](https://bre5551project.streamlit.app/)
+
