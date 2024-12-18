@@ -11,17 +11,28 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# URL to the CSV file on GitHub
+# Grab data from the CSV file on GitHub
 url = "https://raw.githubusercontent.com/bre5551/Project/main/bls_data.csv"
 
 # Load the data
-@st.cache
+@st.cache_data
 def load_data(url):
     df = pd.read_csv(url)
-    # Date column in datetime format
-    df['date'] = pd.to_datetime(df['date'])
+
+    # Map period codes if necessary
+    if 'period' in df.columns:
+        period_map = {f"M{str(i).zfill(2)}": i for i in range(1, 13)}
+        df['month'] = df['period'].map(period_map)
+        df['date'] = pd.to_datetime(df['year'].astype(str) + '-' + df['month'].astype(str) + '-01')
+    elif 'period_name' in df.columns:
+        df['date'] = pd.to_datetime(df['year'].astype(str) + '-' + df['period_name'])
+    else:
+        st.error("Missing required column for date construction ('period' or 'period_name').")
+
     return df
 
+
+# Load the data
 data = load_data(url)
 
 # Breakout individual datasets for each series
